@@ -23,6 +23,8 @@ class CreateCustomersTable extends Migration
             $table->integer('height');
             $table->float('weight');
             $table->timestamps();
+
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
         });
     }
 

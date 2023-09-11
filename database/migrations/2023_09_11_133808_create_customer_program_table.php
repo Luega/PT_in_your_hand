@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateProgramsTable extends Migration
+class CreateCustomerProgramTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,14 +13,12 @@ class CreateProgramsTable extends Migration
      */
     public function up()
     {
-        Schema::create('programs', function (Blueprint $table) {
+        Schema::create('customer_program', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
-            $table->date('period_of_time');
-            $table->string('goal');
             $table->timestamps();
 
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignId('customer_id')->constrained()->onDelete('cascade');
+            $table->foreignId('program_id')->constrained();
         });
     }
 
@@ -31,6 +29,6 @@ class CreateProgramsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('programs');
+        Schema::dropIfExists('customer_program');
     }
 }
