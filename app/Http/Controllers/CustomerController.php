@@ -36,7 +36,9 @@ class CustomerController extends Controller
             'weight' => 'required|numeric|min:0',
         ]);
 
-        $customer = Customer::create($validatedData);
+        $customer = new Customer($validatedData);
+        $customer->user_id = 1; // SHOULD ADD AUTH USER ID
+        $customer->save();
 
         return response()->json(['customer' => $customer], 201);
     }

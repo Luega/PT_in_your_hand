@@ -7,79 +7,67 @@ use Illuminate\Http\Request;
 
 class ProgramController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
-        //
+        $programs = Program::all();
+        return response()->json(['programs' => $programs], 200);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+    public function show($id)
     {
-        //
+        $program = Program::find($id);
+
+        if (!$program) {
+            return response()->json(['message' => 'Program not found'], 404);
+        }
+
+        return response()->json(['program' => $program], 200);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
-        //
+        $validatedData = $request->validate([
+            'title' => 'required|string|max:255',
+            'period_of_time' => 'required|date',
+            'goal' => 'required|string|max:255',
+        ]);
+        
+        $program = new Program($validatedData);
+        $program->user_id = 1; // SHOULD ADD AUTH USER ID
+        $program->save();
+
+        return response()->json(['program' => $program], 201);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Program  $program
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Program $program)
+    public function update(Request $request, $id)
     {
-        //
+        $program = Program::find($id);
+
+        if (!$program) {
+            return response()->json(['message' => 'Program not found'], 404);
+        }
+
+        $validatedData = $request->validate([
+            'title' => 'required|string|max:255',
+            'period_of_time' => 'required|date',
+            'goal' => 'required|string|max:255',
+        ]);
+
+        $program->update($validatedData);
+
+        return response()->json(['program' => $program], 200);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Program  $program
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Program $program)
+    public function destroy($id)
     {
-        //
-    }
+        $program = Program::find($id);
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Program  $program
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Program $program)
-    {
-        //
-    }
+        if (!$program) {
+            return response()->json(['message' => 'Program not found'], 404);
+        }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Program  $program
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Program $program)
-    {
-        //
+        $program->delete();
+
+        return response()->json(['message' => 'Program deleted'], 204);
     }
 }
