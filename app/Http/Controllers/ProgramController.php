@@ -108,13 +108,13 @@ class ProgramController extends Controller
         ]);
 
         foreach ($request->input('exercise_ids') as $exerciseId) {
-            if ($program->exercises()->where('exercise_id', $exerciseId)->doesnotExist()) {
+            if ($program->exercises()->where('exercise_id', $exerciseId)->doesntExist()) {
                 return response()->json(['message' => 'Relationship does not exists for program ID ' . $exerciseId], 400);
             }
         }
 
         $program->exercises()->detach($request->input('exercise_ids'));
         
-        return response()->json(['message' => 'Exercises attached to program']);
+        return response()->json(['message' => 'Exercises detached from program']);
     }
 }
