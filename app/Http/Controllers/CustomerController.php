@@ -7,6 +7,7 @@ use App\Models\Program;
 use Illuminate\Contracts\Support\ValidatedData;
 use Illuminate\Http\Request;
 
+
 class CustomerController extends Controller
 {
    public function index()
@@ -90,6 +91,12 @@ class CustomerController extends Controller
             'program_ids.*' => 'required|exists:programs,id',
         ]);
 
+        foreach ($request->input('program_ids') as $programId) {
+            if ($customer->programs()->where('program_id', $programId)->exists()) {
+                return response()->json(['message' => 'Relationship already exists for program ID ' . $programId], 400);
+            }
+        }
+
         $customer->programs()->attach($request->input('program_ids'));
         
         return response()->json(['message' => 'Programs attached to customer']);
@@ -106,6 +113,12 @@ class CustomerController extends Controller
             'program_ids' => 'required|array',
             'program_ids.*' => 'required|exists:programs,id',
         ]);
+
+        foreach ($request->input('program_ids') as $programId) {
+            if ($customer->programs()->where('program_id', $programId)->doesntExist()) {
+                return response()->json(['message' => 'Relationship does not exists for program ID ' . $programId], 400);
+            }
+        }
 
         $customer->programs()->detach($request->input('program_ids'));
         

@@ -29,5 +29,5 @@ Route::post('customers/{customer}/detachPrograms', [CustomerController::class, '
 Route::resource('exercises', ExerciseController::class);
 
 Route::resource('programs', ProgramController::class);
-Route::post('programs/{program}/attachExercises', [CustomerController::class, 'attachExercises']);
-Route::post('programs/{program}/detachExercises', [CustomerController::class, 'detachExercises']);
+Route::post('programs/{program}/attachExercises', [ProgramController::class, 'attachExercises']);
+Route::post('programs/{program}/detachExercises', [ProgramController::class, 'detachExercises']);

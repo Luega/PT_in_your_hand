@@ -84,6 +84,12 @@ class ProgramController extends Controller
             'exercise_ids.*' => 'required|exists:exercises,id',
         ]);
 
+        foreach ($request->input('exercise_ids') as $exerciseId) {
+            if ($program->exercises()->where('exercise_id', $exerciseId)->exists()) {
+                return response()->json(['message' => 'Relationship already exists for program ID ' . $exerciseId], 400);
+            }
+        }
+
         $program->exercises()->attach($request->input('exercise_ids'));
         
         return response()->json(['message' => 'Exercises attached to program']);
@@ -100,6 +106,12 @@ class ProgramController extends Controller
             'exercise_ids' => 'required|array',
             'exercise_ids.*' => 'required|exists:exercises,id',
         ]);
+
+        foreach ($request->input('exercise_ids') as $exerciseId) {
+            if ($program->exercises()->where('exercise_id', $exerciseId)->doesnotExist()) {
+                return response()->json(['message' => 'Relationship does not exists for program ID ' . $exerciseId], 400);
+            }
+        }
 
         $program->exercises()->detach($request->input('exercise_ids'));
         
