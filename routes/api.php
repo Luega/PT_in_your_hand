@@ -23,11 +23,11 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::resource('customers', CustomerController::class);
-Route::post('customers/{customer}/attachProgram', [CustomerController::class, 'attachProgram']);
-Route::post('customers/{customer}/detachProgram', [CustomerController::class, 'detachProgram']);
+Route::post('customers/{customer}/attachPrograms', [CustomerController::class, 'attachPrograms']);
+Route::post('customers/{customer}/detachPrograms', [CustomerController::class, 'detachPrograms']);
 
 Route::resource('exercises', ExerciseController::class);
 
 Route::resource('programs', ProgramController::class);
-Route::post('programs/{program}/attachProgram', [CustomerController::class, 'attachExercise']);
-Route::post('programs/{program}/detachProgram', [CustomerController::class, 'detachExercise']);
+Route::post('programs/{program}/attachExercises', [CustomerController::class, 'attachExercises']);
+Route::post('programs/{program}/detachExercises', [CustomerController::class, 'detachExercises']);

@@ -78,7 +78,7 @@ class CustomerController extends Controller
         return response()->json(['message' => 'Customer deleted'], 204);
     }
 
-    public function attachProgram($id, Request $request)
+    public function attachPrograms($id, Request $request)
     {
         $customer = Customer::find($id);
         if (!$customer) {
@@ -95,7 +95,7 @@ class CustomerController extends Controller
         return response()->json(['message' => 'Programs attached to customer']);
     }
 
-    public function detachProgram($id, Request $request)
+    public function detachPrograms($id, Request $request)
     {
         $customer = Customer::find($id);
         if (!$customer) {

@@ -72,7 +72,7 @@ class ProgramController extends Controller
         return response()->json(['message' => 'Program deleted'], 204);
     }
 
-    public function attachExercise($id, Request $request)
+    public function attachExercises($id, Request $request)
     {
        $program = Program::find($id);
         if (!$program) {
@@ -89,7 +89,7 @@ class ProgramController extends Controller
         return response()->json(['message' => 'Exercises attached to program']);
     }
 
-    public function detachExercise($id, Request $request)
+    public function detachExercises($id, Request $request)
     {
        $program = Program::find($id);
         if (!$program) {
