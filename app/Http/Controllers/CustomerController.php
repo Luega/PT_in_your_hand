@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Customer;
 use App\Models\Program;
+use Illuminate\Contracts\Support\ValidatedData;
 use Illuminate\Http\Request;
 
 class CustomerController extends Controller
@@ -17,7 +18,6 @@ class CustomerController extends Controller
     public function show($id)
     {
         $customer = Customer::find($id);
-
         if (!$customer) {
             return response()->json(['message' => 'Customer not found'], 404);
         }
@@ -27,7 +27,7 @@ class CustomerController extends Controller
 
     public function store(Request $request)
     {
-        $validatedData = $request->validate([
+        $request->validate([
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
             'email' => 'required|email|unique:customers,email',
@@ -37,7 +37,7 @@ class CustomerController extends Controller
             'weight' => 'required|numeric|min:0',
         ]);
 
-        $customer = new Customer($validatedData);
+        $customer = new Customer($request->all());
         $customer->user_id = 1; // SHOULD ADD AUTH USER ID
         $customer->save();
 
@@ -47,12 +47,11 @@ class CustomerController extends Controller
     public function update(Request $request, $id)
     {
         $customer = Customer::find($id);
-
         if (!$customer) {
             return response()->json(['message' => 'Customer not found'], 404);
         }
 
-        $validatedData = $request->validate([
+        $request->validate([
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
             'email' => 'required|email|unique:customers,email,' . $customer->id,
@@ -62,7 +61,7 @@ class CustomerController extends Controller
             'weight' => 'required|numeric|min:0',
         ]);
 
-        $customer->update($validatedData);
+        $customer->update($request->all());
 
         return response()->json(['customer' => $customer], 200);
     }
@@ -70,7 +69,6 @@ class CustomerController extends Controller
     public function destroy($id)
     {
         $customer = Customer::find($id);
-
         if (!$customer) {
             return response()->json(['message' => 'Customer not found'], 404);
         }
@@ -80,33 +78,37 @@ class CustomerController extends Controller
         return response()->json(['message' => 'Customer deleted'], 204);
     }
 
-    public function attachProgram(Request $request)
+    public function attachProgram($id, Request $request)
     {
+        $customer = Customer::find($id);
+        if (!$customer) {
+            return response()->json(['message' => 'Customer not found'], 404);
+        }
+
         $request->validate([
-            'customer_id' => 'required|exists:customers,id',
-            'program_id' => 'required|exists:programs,id',
+            'program_ids' => 'required|array',
+            'program_ids.*' => 'required|exists:programs,id',
         ]);
 
-        $customer = Customer::find($request->input('customer_id'));
-        $program = Program::find($request->input('program_id'));
-
-        $customer->programs()->attach($program->id);
+        $customer->programs()->attach($request->input('program_ids'));
         
-        return response()->json(['message' => 'Program attached to customer']);
+        return response()->json(['message' => 'Programs attached to customer']);
     }
 
-    public function detachProgram(Request $request)
+    public function detachProgram($id, Request $request)
     {
+        $customer = Customer::find($id);
+        if (!$customer) {
+            return response()->json(['message' => 'Customer not found'], 404);
+        }
+
         $request->validate([
-            'customer_id' => 'required|exists:customers,id',
-            'program_id' => 'required|exists:programs,id',
+            'program_ids' => 'required|array',
+            'program_ids.*' => 'required|exists:programs,id',
         ]);
 
-        $customer = Customer::find($request->input('customer_id'));
-        $program = Program::find($request->input('program_id'));
-
-        $customer->programs()->detach($program->id);
+        $customer->programs()->detach($request->input('program_ids'));
         
-        return response()->json(['message' => 'Program detached from customer']);
+        return response()->json(['message' => 'Programs detached from customer']);
     }
 }
