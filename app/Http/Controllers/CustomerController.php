@@ -7,115 +7,73 @@ use Illuminate\Http\Request;
 
 class CustomerController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+   public function index()
     {
         $customers = Customer::all();
-
         return response()->json(['customers' => $customers], 200);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
+    public function show($id)
     {
-        $request->validate([
-            'first_name'=>'required',
-            'last_name'=>'required',
-            'email'=>'required',
-            'date_of_birth'=>'required',
-            'gender'=>'required',
-            'height'=>'required',
-            'weight'=>'required',
-            'user_id'=>'required',
-        ]);
+        $customer = Customer::find($id);
 
-        $customer = new Customer();
-
-        $customer->first_name = $request->input('first_name');
-        $customer->last_name = $request->input('last_name');
-        $customer->email = $request->input('email');
-        $customer->date_of_birth = $request->input('date_of_birth');
-        $customer->gender = $request->input('gender');
-        $customer->height = $request->input('height');
-        $customer->weight = $request->input('weight');
-        $customer->user_id = $request->input('user_id');
-
-        $customer->save();
-
-        return response()->json(['customer' => $customer], 201);
-    
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Customer  $customer
-     * @return \Illuminate\Http\Response
-     */
-    public function show($customer)
-    {
-        $customer = Customer::find($customer);
+        if (!$customer) {
+            return response()->json(['message' => 'Customer not found'], 404);
+        }
 
         return response()->json(['customer' => $customer], 200);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Customer  $customer
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $customer)
+    public function store(Request $request)
     {
-        $request->validate([
-            'first_name'=>'required',
-            'last_name'=>'required',
-            'email'=>'required',
-            'date_of_birth'=>'required',
-            'gender'=>'required',
-            'height'=>'required',
-            'weight'=>'required',
-            'user_id'=>'required',
+        $validatedData = $request->validate([
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'email' => 'required|email|unique:customers,email',
+            'date_of_birth' => 'required|date',
+            'gender' => 'required|boolean',
+            'height' => 'required|numeric|min:0',
+            'weight' => 'required|numeric|min:0',
         ]);
 
-        $customer = Customer::find($customer);
-
-        $customer->first_name = $request->input('first_name');
-        $customer->last_name = $request->input('last_name');
-        $customer->email = $request->input('email');
-        $customer->date_of_birth = $request->input('date_of_birth');
-        $customer->gender = $request->input('gender');
-        $customer->height = $request->input('height');
-        $customer->weight = $request->input('weight');
-        $customer->user_id = $request->input('user_id');
-
-        $customer->save();
+        $customer = Customer::create($validatedData);
 
         return response()->json(['customer' => $customer], 201);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Customer  $customer
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($customer)
+    public function update(Request $request, $id)
     {
-        $customer = Customer::find($customer);
+        $customer = Customer::find($id);
+
+        if (!$customer) {
+            return response()->json(['message' => 'Customer not found'], 404);
+        }
+
+        $validatedData = $request->validate([
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'email' => 'required|email|unique:customers,email,' . $customer->id,
+            'date_of_birth' => 'required|date',
+            'gender' => 'required|boolean',
+            'height' => 'required|numeric|min:0',
+            'weight' => 'required|numeric|min:0',
+        ]);
+
+        $customer->update($validatedData);
+
+        return response()->json(['customer' => $customer], 200);
+    }
+
+    public function destroy($id)
+    {
+        $customer = Customer::find($id);
+
+        if (!$customer) {
+            return response()->json(['message' => 'Customer not found'], 404);
+        }
 
         $customer->delete();
 
-        return Response()->json('Customer deleted successfully', 200);
+        return response()->json(['message' => 'Customer deleted'], 204);
     }
 }

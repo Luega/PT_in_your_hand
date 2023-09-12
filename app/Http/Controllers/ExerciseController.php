@@ -7,79 +7,73 @@ use Illuminate\Http\Request;
 
 class ExerciseController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
-        //
+        $exercises = Exercise::all();
+        return response()->json(['exercises' => $exercises], 200);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+    public function show($id)
     {
-        //
+        $exercise = Exercise::find($id);
+
+        if (!$exercise) {
+            return response()->json(['message' => 'Exercise not found'], 404);
+        }
+
+        return response()->json(['exercise' => $exercise], 200);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
-        //
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'type' => 'required|string|max:255',
+            'muscles_involved' => 'required|string|max:255',
+            'repetitions' => 'required|integer|min:0',
+            'series' => 'required|integer|min:0',
+            'time_under_work' => 'required|integer|min:0',
+            'time_of_rest' => 'required|integer|min:0',
+        ]);
+
+        $exercise = Exercise::create($validatedData);
+
+        return response()->json(['exercise' => $exercise], 201);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Exercise  $exercise
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Exercise $exercise)
+    public function update(Request $request, $id)
     {
-        //
+        $exercise = Exercise::find($id);
+
+        if (!$exercise) {
+            return response()->json(['message' => 'Exercise not found'], 404);
+        }
+
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'type' => 'required|string|max:255',
+            'muscles_involved' => 'required|string|max:255',
+            'repetitions' => 'required|integer|min:0',
+            'series' => 'required|integer|min:0',
+            'time_under_work' => 'required|integer|min:0',
+            'time_of_rest' => 'required|integer|min:0',
+        ]);
+
+        $exercise->update($validatedData);
+
+        return response()->json(['exercise' => $exercise], 200);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Exercise  $exercise
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Exercise $exercise)
+    public function destroy($id)
     {
-        //
-    }
+        $exercise = Exercise::find($id);
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Exercise  $exercise
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Exercise $exercise)
-    {
-        //
-    }
+        if (!$exercise) {
+            return response()->json(['message' => 'Exercise not found'], 404);
+        }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Exercise  $exercise
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Exercise $exercise)
-    {
-        //
+        $exercise->delete();
+
+        return response()->json(['message' => 'Exercise deleted'], 204);
     }
 }
