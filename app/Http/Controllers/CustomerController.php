@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Customer;
+use App\Models\Program;
 use Illuminate\Http\Request;
 
 class CustomerController extends Controller
@@ -77,5 +78,35 @@ class CustomerController extends Controller
         $customer->delete();
 
         return response()->json(['message' => 'Customer deleted'], 204);
+    }
+
+    public function attachProgram(Request $request)
+    {
+        $request->validate([
+            'customer_id' => 'required|exists:customers,id',
+            'program_id' => 'required|exists:programs,id',
+        ]);
+
+        $customer = Customer::find($request->input('customer_id'));
+        $program = Program::find($request->input('program_id'));
+
+        $customer->programs()->attach($program->id);
+        
+        return response()->json(['message' => 'Program attached to customer']);
+    }
+
+    public function detachProgram(Request $request)
+    {
+        $request->validate([
+            'customer_id' => 'required|exists:customers,id',
+            'program_id' => 'required|exists:programs,id',
+        ]);
+
+        $customer = Customer::find($request->input('customer_id'));
+        $program = Program::find($request->input('program_id'));
+
+        $customer->programs()->detach($program->id);
+        
+        return response()->json(['message' => 'Program detached from customer']);
     }
 }
