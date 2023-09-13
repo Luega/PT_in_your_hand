@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Program extends Model
 {
+    use HasFactory;
+
     protected $table = 'programs';
 
      protected $fillable = [

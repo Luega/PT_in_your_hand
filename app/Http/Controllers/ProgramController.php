@@ -34,7 +34,7 @@ class ProgramController extends Controller
         ]);
         
         $program = new Program($request->all());
-        $program->user_id = 1; // SHOULD ADD AUTH USER ID
+        $program->user_id = $request->user()->id; 
         $program->save();
 
         return response()->json(['program' => $program], 201);

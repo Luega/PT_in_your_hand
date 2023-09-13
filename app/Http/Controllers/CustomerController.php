@@ -39,7 +39,7 @@ class CustomerController extends Controller
         ]);
 
         $customer = new Customer($request->all());
-        $customer->user_id = 1; // SHOULD ADD AUTH USER ID
+        $customer->user_id = $request->user()->id;
         $customer->save();
 
         return response()->json(['customer' => $customer], 201);
