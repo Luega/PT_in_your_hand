@@ -40,6 +40,7 @@ class ExerciseController extends Controller
 
         $exercise = new Exercise($request->all());
         $exercise->user_id = $request->user()->id;
+        $exercise->save();
 
         return response()->json(['exercise' => $exercise], 201);
     }
