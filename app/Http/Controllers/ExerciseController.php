@@ -9,13 +9,15 @@ class ExerciseController extends Controller
 {
     public function index()
     {
-        $exercises = Exercise::all();
+        $user = auth()->user();
+        $exercises = $user->exercises;
         return response()->json(['exercises' => $exercises], 200);
     }
 
     public function show($id)
     {
-        $exercise = Exercise::find($id);
+        $user = auth()->user();
+        $exercise = $user->exercises->find($id);
 
         if (!$exercise) {
             return response()->json(['message' => 'Exercise not found'], 404);
@@ -26,7 +28,7 @@ class ExerciseController extends Controller
 
     public function store(Request $request)
     {
-        $validatedData = $request->validate([
+        $request->validate([
             'name' => 'required|string|max:255',
             'type' => 'required|string|max:255',
             'muscles_involved' => 'required|string|max:255',
@@ -36,14 +38,16 @@ class ExerciseController extends Controller
             'time_of_rest' => 'required|integer|min:0',
         ]);
 
-        $exercise = Exercise::create($validatedData);
+        $exercise = new Exercise($request->all());
+        $exercise->user_id = $request->user()->id;
 
         return response()->json(['exercise' => $exercise], 201);
     }
 
     public function update(Request $request, $id)
     {
-        $exercise = Exercise::find($id);
+        $user = auth()->user();
+        $exercise = $user->exercises->find($id);
 
         if (!$exercise) {
             return response()->json(['message' => 'Exercise not found'], 404);
@@ -66,7 +70,8 @@ class ExerciseController extends Controller
 
     public function destroy($id)
     {
-        $exercise = Exercise::find($id);
+        $user = auth()->user();
+        $exercise = $user->exercises->find($id);
 
         if (!$exercise) {
             return response()->json(['message' => 'Exercise not found'], 404);
