@@ -51,4 +51,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Program::class);
     }
+
+    public function exercises()
+    {
+        return $this->hasMany(Exercise::class);
+    }
 }

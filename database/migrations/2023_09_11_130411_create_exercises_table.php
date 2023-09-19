@@ -23,6 +23,8 @@ class CreateExercisesTable extends Migration
             $table->float('time_under_work');
             $table->float('time_of_rest');
             $table->timestamps();
+
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
         });
     }
 
