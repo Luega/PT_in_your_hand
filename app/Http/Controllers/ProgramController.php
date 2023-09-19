@@ -10,13 +10,15 @@ class ProgramController extends Controller
 {
     public function index()
     {
-        $programs = Program::all();
+        $user = auth()->user();
+        $programs = $user->programs;
         return response()->json(['programs' => $programs], 200);
     }
 
     public function show($id)
     {
-        $program = Program::find($id);
+        $user = auth()->user();
+        $program = $user->programs->find($id);
 
         if (!$program) {
             return response()->json(['message' => 'Program not found'], 404);
@@ -42,7 +44,8 @@ class ProgramController extends Controller
 
     public function update(Request $request, $id)
     {
-        $program = Program::find($id);
+        $user = auth()->user();
+        $program = $user->programs->find($id);
 
         if (!$program) {
             return response()->json(['message' => 'Program not found'], 404);
@@ -61,7 +64,8 @@ class ProgramController extends Controller
 
     public function destroy($id)
     {
-        $program = Program::find($id);
+        $user = auth()->user();
+        $program = $user->programs->find($id);
 
         if (!$program) {
             return response()->json(['message' => 'Program not found'], 404);
@@ -74,7 +78,8 @@ class ProgramController extends Controller
 
     public function attachExercises($id, Request $request)
     {
-       $program = Program::find($id);
+        $user = auth()->user();
+        $program = $user->programs->find($id);
         if (!$program) {
             return response()->json(['message' => 'Program not found'], 404);
         }
@@ -97,7 +102,8 @@ class ProgramController extends Controller
 
     public function detachExercises($id, Request $request)
     {
-       $program = Program::find($id);
+        $user = auth()->user();
+        $program = $user->programs->find($id);
         if (!$program) {
             return response()->json(['message' => 'Program not found'], 404);
         }

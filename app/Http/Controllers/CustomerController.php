@@ -12,13 +12,15 @@ class CustomerController extends Controller
 {
    public function index()
     {
-        $customers = Customer::all();
+        $user = auth()->user();
+        $customers = $user->customers;
         return response()->json(['customers' => $customers], 200);
     }
 
     public function show($id)
     {
-        $customer = Customer::find($id);
+        $user = auth()->user();
+        $customer = $user->customers->find($id);
         if (!$customer) {
             return response()->json(['message' => 'Customer not found'], 404);
         }
@@ -47,7 +49,8 @@ class CustomerController extends Controller
 
     public function update(Request $request, $id)
     {
-        $customer = Customer::find($id);
+        $user = auth()->user();
+        $customer = $user->customers->find($id);
         if (!$customer) {
             return response()->json(['message' => 'Customer not found'], 404);
         }
@@ -69,7 +72,8 @@ class CustomerController extends Controller
 
     public function destroy($id)
     {
-        $customer = Customer::find($id);
+        $user = auth()->user();
+        $customer = $user->customers->find($id);
         if (!$customer) {
             return response()->json(['message' => 'Customer not found'], 404);
         }
@@ -81,7 +85,8 @@ class CustomerController extends Controller
 
     public function attachPrograms($id, Request $request)
     {
-        $customer = Customer::find($id);
+        $user = auth()->user();
+        $customer = $user->customers->find($id);
         if (!$customer) {
             return response()->json(['message' => 'Customer not found'], 404);
         }
@@ -104,7 +109,8 @@ class CustomerController extends Controller
 
     public function detachPrograms($id, Request $request)
     {
-        $customer = Customer::find($id);
+        $user = auth()->user();
+        $customer = $user->customers->find($id);
         if (!$customer) {
             return response()->json(['message' => 'Customer not found'], 404);
         }
