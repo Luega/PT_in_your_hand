@@ -11,14 +11,14 @@ class ProgramController extends Controller
     public function index()
     {
         $user = auth()->user();
-        $programs = $user->programs;
+        $programs = Program::where("user_id", $user->id)->with('exercises')->get();
         return response()->json(['programs' => $programs], 200);
     }
 
     public function show($id)
     {
         $user = auth()->user();
-        $program = $user->programs->find($id);
+        $program = Program::where("user_id", $user->id)->with('exercises')->get()->find($id);
 
         if (!$program) {
             return response()->json(['message' => 'Program not found'], 404);

@@ -13,14 +13,14 @@ class CustomerController extends Controller
    public function index()
     {
         $user = auth()->user();
-        $customers = $user->customers;
+        $customers = Customer::where('user_id', $user->id)->with('programs')->get();
         return response()->json(['customers' => $customers], 200);
     }
 
     public function show($id)
     {
         $user = auth()->user();
-        $customer = $user->customers->find($id);
+        $customer = Customer::where('user_id', $user->id)->with('programs')->get()->find($id);
         if (!$customer) {
             return response()->json(['message' => 'Customer not found'], 404);
         }
